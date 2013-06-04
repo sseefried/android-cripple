@@ -1,1 +1,1 @@
-* * * * * /etc/init.d/20fw >> /data/tmp/crontest
+* * * * * /etc/init.d/20fw >> /dev/null
