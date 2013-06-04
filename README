@@ -1,0 +1,4 @@
+# Remounting read-write so you can push the file
+
+mount -o rw,remount /system
+

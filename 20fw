@@ -1,0 +1,23 @@
+TCP=6 # getprotobyname doesn't work on Android
+iptables -F
+
+DNS_FOR="/system/local/bin/dns-for"
+
+for i in "vpn.nicta.com.au" "maps.google.com" "mail.google.com" "nab.com.au" "dropbox.com"; do
+  echo "Whitelisting $i: $($DNS_FOR $i)"
+  iptables -I INPUT -p $TCP -s $($DNS_FOR $i) -j ACCEPT
+done
+
+# Radio
+echo "Whitelisting Radio"
+iptables -I INPUT -p $TCP -s 204.69.221.0/24 -j ACCEPT
+iptables -I INPUT -p $TCP -s 203.2.218.0/24  -j ACCEPT
+iptables -I INPUT -p $TCP -s 54.240.0.0/16   -j ACCEPT
+
+# whitelist Wikipedia
+echo "Whitelisting Wikpedia"
+iptables -I INPUT -p $TCP -s 208.80.152.0/24 -j ACCEPT
+iptables -I INPUT -p $TCP -s 208.80.154.0/24 -j ACCEPT
+
+# Drop everything else
+iptables -A INPUT -p $TCP -j DROP

@@ -1,0 +1,4 @@
+echo "Killing crond"
+for i in `pgrep crond`; do
+  kill -9 $i
+done
