@@ -2,10 +2,28 @@
 
 ## Introduction
 
-This project is a script I wrote that allows me to cripple my Android
+Android Cripple is a script that allows me to cripple my Android
 based phone so that only certain applications have data access, while the
 others are denied. In essence it turns it into a dumb phone with a few
 useful apps enabled such as Google Maps, Calendars, MMS, etc.
+
+## Dependencies
+
+You must have ```adb``` installed
+
+## Usage
+
+To cripple:
+
+```
+$ ./android-cripple.sh
+```
+
+To uncripple:
+
+```
+$ ./android-uncripple.sh
+```
 
 ## Notes taken during development
 
