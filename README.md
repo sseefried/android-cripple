@@ -51,7 +51,9 @@ u0_a132   4221  1899  517528 24588 ffffffff 400f5574 S com.whatsapp
 ```
 
 Then have a look for a package identifier that looks something like what you want to whitelist.
-e.g. com.whatsapp is WhatsApp.
+e.g. ```com.whatsapp``` is WhatsApp. From this you can see that ```u0a132``` is the UID for this app.
+
+
 
 ## Notes taken during development
 
