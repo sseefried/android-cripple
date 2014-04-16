@@ -8,19 +8,25 @@ adb shell mkdir -p /data/tmp
 adb shell mkdir -p /system/local/bin
 
 DNS_FOR="/system/local/bin/dns-for"
+UFP="/system/local/bin/user-for-package"
+
 echo "[+] Installing dns-for"
 adb push $(basename $DNS_FOR) $DNS_FOR
 adb shell chmod 700 $DNS_FOR
+
+echo "[+] Installing user-for-package"
+adb push $(basename $UFP) $UFP
+adb shell chmod 700 $UFP
+
+
 echo "[+] Installing crontab"
 adb push root.crontab /data/cron/root
 
 for FILE in $FILES; do
-  echo "Copying $FILE"
+  echo "[+] Copying $FILE"
   adb push $(basename $FILE) $FILE
   adb shell chmod 755  $FILE
   adb shell chgrp shell $FILE # 2000 is "shell"
+  echo "[+] Running $FILE"
   adb shell $FILE
 done
-
-echo "[+] Disabling Play Store"
-adb shell chmod 000 /data/app/com.android.vending*.apk

@@ -2,15 +2,12 @@ TCP=6 # getprotobyname doesn't work on Android
 
 
 DNS_FOR="/system/local/bin/dns-for"
+UFP="/system/local/bin/user-for-package"
+
 
 WHITELIST=""
 
-for i in "vpn.nicta.com.au" "maps.google.com" "imap.gmail.com" \
-         "mail.google.com" "nab.com.au" "ib.nab.com.au" \
-         "dropbox.com" "imdb.com" "www.imdb.com" "m.imdb.com" \
-         "mmsc.optus.com.au" \
-         "facebook.com" "www.facebook.com" \
-         "m.facebook.com"  "amazon.com" \
+for i in "imdb.com" "www.imdb.com" "m.imdb.com" \
          "stats.dawsonpub.com.au" \
          "seanseefried.com" \
          "munchcrunchorganics.com.au" \
@@ -18,18 +15,13 @@ for i in "vpn.nicta.com.au" "maps.google.com" "imap.gmail.com" \
          "goget.com.au"; do
   IP="$($DNS_FOR $i)"
   echo "Adding to whitelist $i: $IP"
-  
+
   WHITELIST="$WHITELIST $IP"
 done
 
-MMS_PROXY="61.88.190.0/24"
-RADIO="204.69.221.0/24 203.2.218.0/24 54.240.0.0/16"
-WIKIPEDIA="208.80.152.0/24 208.80.154.0/24"
 LOCAL="192.168.0.0/16 10.0.0.0/8"
-AMAZON="54.224.0.0/12 72.21.192.0/19"
-APNIC="203.0.0.0/8 202.0.0.0/8"
 
-WHITELIST="$WHITELIST $RADIO $WIKIPEDIA $LOCAL $MMS_PROXY $AMAZON $APNIC"
+WHITELIST="$WHITELIST $LOCAL"
 
 echo $WHITELIST
 
@@ -38,8 +30,42 @@ iptables -F
 echo "[+] Now whitelisting"
 for i in $WHITELIST; do
   echo "Whitelisting $i"
-  iptables -I INPUT -p $TCP -s $i -j ACCEPT 
+  iptables -I INPUT -p $TCP -s $i -j ACCEPT
 done
+
+# Whitelist certain apps. Disallow all others.
+# These apps can access the network freely.
+
+#
+#  com.facebook.katana
+#
+
+
+for i in "au.com.nab.mobile" \
+         "com.google.android.apps.maps" \
+         "com.google.android.gm" \
+         "com.dropbox.android" \
+         "com.android.gallery3d" \
+         "com.workpail.inkpad.notepad.notes" \
+         "com.android.calendar" \
+         "com.android.providers.calendar" \
+         "com.google.android.gsf.login" \
+         "com.highwindsoftware.tunesync" \
+         "com.grofsoft.tripview.lite" \
+         "com.amazon.kindle" \
+         "com.zegoggles.smssync" \
+         "com.android.contacts" \
+         "com.something.random" \
+         "org.wikipedia" \
+         "com.android.mms"; do
+  UID=$($UFP $i)
+  if [ "$UID" -ge 10000 ]; then
+    echo "[+] Enabling app $i (UID=$UID)"
+    iptables -I INPUT -p $TCP -m owner --uid-owner $UID -j ACCEPT
+  fi
+
+done
+
 
 # Drop everything else
 echo "[+] Blacklist all the rest"
