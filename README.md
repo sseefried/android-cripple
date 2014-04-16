@@ -1,8 +1,19 @@
-# Remounting read-write so you can push the file
+# Android Cripple
+
+## Introduction
+
+This project is a script I wrote that allows me to cripple my Android
+based phone so that only certain applications have data access, while the
+others are denied. In essence it turns it into a dumb phone with a few
+useful apps enabled such as Google Maps, Calendars, MMS, etc.
+
+## Notes taken during development
+
+### Remounting read-write so you can push the file
 
 mount -o rw,remount /system
 
-## A note on packages and user IDs
+### A note on packages and user IDs
 
 The following information I got from
 http://www.all-things-android.com/content/deeper-look-android-application-permissions
