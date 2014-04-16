@@ -1,23 +1,46 @@
 TCP=6 # getprotobyname doesn't work on Android
-iptables -F
+
 
 DNS_FOR="/system/local/bin/dns-for"
 
-for i in "vpn.nicta.com.au" "maps.google.com" "mail.google.com" "nab.com.au" "dropbox.com"; do
-  echo "Whitelisting $i: $($DNS_FOR $i)"
-  iptables -I INPUT -p $TCP -s $($DNS_FOR $i) -j ACCEPT
+WHITELIST=""
+
+for i in "vpn.nicta.com.au" "maps.google.com" "imap.gmail.com" \
+         "mail.google.com" "nab.com.au" "ib.nab.com.au" \
+         "dropbox.com" "imdb.com" "www.imdb.com" "m.imdb.com" \
+         "mmsc.optus.com.au" \
+         "facebook.com" "www.facebook.com" \
+         "m.facebook.com"  "amazon.com" \
+         "stats.dawsonpub.com.au" \
+         "seanseefried.com" \
+         "munchcrunchorganics.com.au" \
+         "www.goget.com.au" \
+         "goget.com.au"; do
+  IP="$($DNS_FOR $i)"
+  echo "Adding to whitelist $i: $IP"
+  
+  WHITELIST="$WHITELIST $IP"
 done
 
-# Radio
-echo "Whitelisting Radio"
-iptables -I INPUT -p $TCP -s 204.69.221.0/24 -j ACCEPT
-iptables -I INPUT -p $TCP -s 203.2.218.0/24  -j ACCEPT
-iptables -I INPUT -p $TCP -s 54.240.0.0/16   -j ACCEPT
+MMS_PROXY="61.88.190.0/24"
+RADIO="204.69.221.0/24 203.2.218.0/24 54.240.0.0/16"
+WIKIPEDIA="208.80.152.0/24 208.80.154.0/24"
+LOCAL="192.168.0.0/16 10.0.0.0/8"
+AMAZON="54.224.0.0/12 72.21.192.0/19"
+APNIC="203.0.0.0/8 202.0.0.0/8"
 
-# whitelist Wikipedia
-echo "Whitelisting Wikpedia"
-iptables -I INPUT -p $TCP -s 208.80.152.0/24 -j ACCEPT
-iptables -I INPUT -p $TCP -s 208.80.154.0/24 -j ACCEPT
+WHITELIST="$WHITELIST $RADIO $WIKIPEDIA $LOCAL $MMS_PROXY $AMAZON $APNIC"
+
+echo $WHITELIST
+
+iptables -F
+
+echo "[+] Now whitelisting"
+for i in $WHITELIST; do
+  echo "Whitelisting $i"
+  iptables -I INPUT -p $TCP -s $i -j ACCEPT 
+done
 
 # Drop everything else
+echo "[+] Blacklist all the rest"
 iptables -A INPUT -p $TCP -j DROP

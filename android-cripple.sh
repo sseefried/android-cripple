@@ -21,3 +21,6 @@ for FILE in $FILES; do
   adb shell chgrp shell $FILE # 2000 is "shell"
   adb shell $FILE
 done
+
+echo "[+] Disabling Play Store"
+adb shell chmod 000 /data/app/com.android.vending*.apk

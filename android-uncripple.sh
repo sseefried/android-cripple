@@ -15,3 +15,6 @@ adb shell iptables -F
 for FILE in $FILES; do
   adb shell rm -f $FILE
 done
+
+echo "[+] Enabling Play Store"
+adb shell chmod 644 /data/app/com.android.vending*.apk

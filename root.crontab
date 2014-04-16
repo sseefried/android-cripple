@@ -1,1 +1,5 @@
-* * * * * /etc/init.d/20fw >> /dev/null
+10 * * * * /etc/init.d/20fw > /dev/null
+20 * * * * /etc/init.d/20fw > /dev/null
+30 * * * * /etc/init.d/20fw > /dev/null
+40 * * * * /etc/init.d/20fw > /dev/null
+50 * * * * /etc/init.d/20fw > /dev/null
