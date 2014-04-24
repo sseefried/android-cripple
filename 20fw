@@ -37,13 +37,16 @@ done
 # These apps can access the network freely.
 
 #
-#  com.facebook.katana
+
 #
 
-
+# gm = GMail
+#         "com.google.android.gm" \
+#         "com.facebook.katana" \
+#
 for i in "au.com.nab.mobile" \
+         "com.lach.translink.activities" \
          "com.google.android.apps.maps" \
-         "com.google.android.gm" \
          "com.dropbox.android" \
          "com.android.gallery3d" \
          "com.workpail.inkpad.notepad.notes" \
