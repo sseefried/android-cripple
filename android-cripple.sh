@@ -1,5 +1,6 @@
 #!/bin/bash
 FILES="/etc/init.d/20fw /etc/init.d/10crond"
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 adb root
 adb shell mount -o rw,remount /system
@@ -11,20 +12,19 @@ DNS_FOR="/system/local/bin/dns-for"
 UFP="/system/local/bin/user-for-package"
 
 echo "[+] Installing dns-for"
-adb push $(basename $DNS_FOR) $DNS_FOR
+adb push "$THIS_DIR/$(basename $DNS_FOR)" $DNS_FOR
 adb shell chmod 700 $DNS_FOR
 
 echo "[+] Installing user-for-package"
-adb push $(basename $UFP) $UFP
+adb push "$THIS_DIR/$(basename $UFP)" $UFP
 adb shell chmod 700 $UFP
 
-
 echo "[+] Installing crontab"
-adb push root.crontab /data/cron/root
+adb push "$THIS_DIR/root.crontab" /data/cron/root
 
 for FILE in $FILES; do
   echo "[+] Copying $FILE"
-  adb push $(basename $FILE) $FILE
+  adb push "$THIS_DIR/$(basename $FILE)" $FILE
   adb shell chmod 755  $FILE
   adb shell chgrp shell $FILE # 2000 is "shell"
   echo "[+] Running $FILE"

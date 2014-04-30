@@ -1,9 +1,21 @@
+#
+# NOTES:
+#
+# 1. I'm not 100% sure but I think it's important to drop OUTPUT chain
+#    packets as well so that you don't use too much battery power.
+#
+
+
+
 TCP=6 # getprotobyname doesn't work on Android
 
 
 DNS_FOR="/system/local/bin/dns-for"
 UFP="/system/local/bin/user-for-package"
 
+
+# Whitelist certain apps. Disallow all others.
+# These apps can access the network freely.
 
 WHITELIST=""
 
@@ -23,28 +35,47 @@ LOCAL="192.168.0.0/16 10.0.0.0/8"
 
 WHITELIST="$WHITELIST $LOCAL"
 
-echo $WHITELIST
-
 iptables -F
 
 echo "[+] Now whitelisting"
 for i in $WHITELIST; do
-  echo "Whitelisting $i"
+#  echo "Whitelisting $i"
   iptables -I INPUT -p $TCP -s $i -j ACCEPT
+  iptables -I OUTPUT -p $TCP -s $i -j ACCEPT
 done
 
-# Whitelist certain apps. Disallow all others.
-# These apps can access the network freely.
+# BLACKLIST=""
+# for i in "pop.gmail.com imap.gmail.com"; do
+#   IP="$($DNS_FOR $i)"
+#   echo "Adding to blacklist $i: $IP"
+#   BLACKLIST="$BLACKLIST $IP"
+# done
 
+# echo "[+] Now blacklisting"
+# for i in $BLACKLIST; do
+#   iptables -I INPUT -p $TCP -s $i -j DROP
+# done
+
+
+
+#  gm = GMail
 #
-
-#
-
-# gm = GMail
 #         "com.google.android.gm" \
 #         "com.facebook.katana" \
 #
 for i in "au.com.nab.mobile" \
+         "com.android.contacts" \
+         "com.dictionary" \
+         "com.meetup" \
+         "com.onepassword.passwordmanager" \
+         "com.memrise.android.memrisecompanian" \
+         "com.evernote" \
+         "com.getpocketbook" \
+         "com.shazam.android" \
+         "com.squashmatch" \
+         "com.eventbrite.attendee" \
+         "com.whatsapp" \
+         "com.viber.voip" \
          "com.lach.translink.activities" \
          "com.google.android.apps.maps" \
          "com.dropbox.android" \
@@ -69,7 +100,7 @@ for i in "au.com.nab.mobile" \
 
 done
 
-
 # Drop everything else
 echo "[+] Blacklist all the rest"
 iptables -A INPUT -p $TCP -j DROP
+iptables -A OUTPUT -p $TCP -j DROP
